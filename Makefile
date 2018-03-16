@@ -16,9 +16,7 @@ install: setup.data
 
 clean:
 	$(SETUP) -clean $(CLEANFLAGS)
-	make -C ppx_test clean
 	make -C tests clean
-	make -C example clean
 	rm -f setup.data setup.log setup.ml
 
 distclean:
@@ -41,6 +39,5 @@ uninstall: setup.data
 	ocamlfind remove ppx_deriving_rpc
 
 test:
-	make -C ppx_test
 	make -C tests
 

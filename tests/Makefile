@@ -2,12 +2,11 @@ OCAMLC = ocamlfind ocamlc
 OCAMLOPT = ocamlfind ocamlopt
 OCAMLFLAGS = -annot -g
 
-PACKS = unix,rresult,xmlm,yojson
+PACKS = unix,rresult,xmlm,yojson,rpclib
 RPC = -I ../_build/lib
 RPCLINK = rpclib.cmxa rpclib_core.cmxa json.cmxa xml.cmxa
 
 CAMLP4 = camlp4o $(shell ocamlfind query type_conv -r -format "-I %d %a" -predicates syntax,preprocessor) $(RPC) rpclib_syntax.cma
-PPXOPTS=-package ppx_deriving -ppxopt ppx_deriving,../_build/ppx/ppx_deriving_rpc.cma
 
 EXAMPLES = \
 	all_types \
@@ -19,9 +18,7 @@ EXAMPLES = \
 	dict \
 	variants \
 	client \
-	client_lwt \
-	client_lwt_new \
-	client_async_new
+	client_lwt 
 
 
 EXECS=$(foreach example, $(EXAMPLES), $(example).opt)
@@ -53,12 +50,6 @@ client_async_new.opt: client_async_new.cmx
 
 client_lwt.cmx: client_lwt.ml
 	$(OCAMLOPT) $(OCAMLFLAGS) -package $(PACKS),lwt,lwt.unix $(RPC) $(RPCLINK) rpclib_lwt.cmxa -c -o $@ $<
-
-client_lwt_new.cmx: client_lwt_new.ml
-	$(OCAMLOPT) $(PPXOPTS) $(OCAMLFLAGS) -package $(PACKS),lwt,lwt.unix $(RPC) $(RPCLINK) rpclib_lwt.cmxa -c -o $@ $<
-
-client_async_new.cmx: client_async_new.ml
-	$(OCAMLOPT) $(PPXOPTS) $(OCAMLFLAGS) -package threads,$(PACKS),async,async_kernel $(RPC) $(RPCLINK) -thread -c -o $@ $<
 
 %.cmx: %.ml
 	$(OCAMLOPT) $(OCAMLFLAGS) -package $(PACKS) $(RPC) $(RPCLINK) -pp "$(CAMLP4)" -c -o $@ $<
