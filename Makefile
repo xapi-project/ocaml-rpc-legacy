@@ -35,8 +35,7 @@ setup.ml: _oasis
 	oasis setup
 
 uninstall: setup.data
-	ocamlfind remove rpclib
-	ocamlfind remove ppx_deriving_rpc
+	ocamlfind remove rpclib_legacy
 
 test:
 	make -C tests
